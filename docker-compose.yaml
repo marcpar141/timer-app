@@ -9,5 +9,11 @@ services:
     networks:
       - timer
 
+  timer:
+    container_name: timer
+    build: timer
+    networks:
+      - timer
+
 networks:
   timer:
