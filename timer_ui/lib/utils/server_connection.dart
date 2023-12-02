@@ -15,6 +15,8 @@ class ServerConnection {
     }
     _socket = IO.io(address);
     _socket?.onConnect((data) => print("connected to: $address"));
+    _socket?.onConnectError((data) => print("connect error :$data"));
+    _socket?.onConnectTimeout((data) => print("connect timeout: $data"));
   }
 
   void disconnect() {
@@ -42,7 +44,7 @@ class ServerConnection {
     _controllers[event]?.close();
     _controllers.remove(event);
     if (_controllers.isEmpty) {
-      _socket?.close();
+      _socket?.dispose();
       _socket = null;
     }
   }

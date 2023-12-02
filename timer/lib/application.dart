@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:timer/server_connection.dart';
 import 'package:timer/timer.dart';
 
@@ -10,14 +9,18 @@ class Application {
 
   Application()
       : _connection = ServerConnection(
-            "ws://192.168.1.108:5000/timer",
-            IO.OptionBuilder()
-                .disableAutoConnect()
-                .setExtraHeaders({"client": "timer_service"}).build());
+          "ws://server:5000/timer",
+          // IO.OptionBuilder()
+          //     .setExtraHeaders({"client": "timer_service"}).build(),
+        );
 
   Future<void> start() async {
-    await _connection.connect();
+    _connection.connect();
 
+    _startObservingSocket();
+  }
+
+  void _startObservingSocket() {
     _connection.observe("control").listen((event) {
       final message = jsonDecode(event) as Map<String, String>;
       final command = message["command"];

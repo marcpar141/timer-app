@@ -3,22 +3,22 @@ import 'dart:async';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class ServerConnection {
-  final String _address;
-  final Map<String, dynamic> _options;
+  final String address;
   IO.Socket? _socket;
   final Map<String, StreamController<String>> _controllers = {};
 
-  ServerConnection(this._address, this._options);
+  ServerConnection(this.address);
 
   Future<void> connect() async {
     if (_socket != null && _socket?.connected == true) {
       return;
     }
-    _socket = IO.io(
-      _address,
-      _options,
-    );
-    _socket?.onConnect((data) => print("connected to: $_address"));
+    _socket = IO.io(address);
+    print("connecttttt");
+    _socket?.onConnecting((data) => print("connecting: $data"));
+    _socket?.onConnect((data) => print("connected to: $address"));
+    _socket?.onConnectError((data) => print("connect error :$data"));
+    _socket?.onConnectTimeout((data) => print("connect timeout: $data"));
   }
 
   void disconnect() {
@@ -46,7 +46,7 @@ class ServerConnection {
     _controllers[event]?.close();
     _controllers.remove(event);
     if (_controllers.isEmpty) {
-      _socket?.close();
+      _socket?.dispose();
       _socket = null;
     }
   }

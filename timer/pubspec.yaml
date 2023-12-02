@@ -9,6 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   socket_io_client: 2.0.3+1
+  dart_ping: 9.0.1
 
 dev_dependencies:
   lints: ^2.0.0
