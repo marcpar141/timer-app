@@ -4,11 +4,12 @@ from flask_socketio import SocketIO
 
 from src.socket.namespaces.timer import TimerNamespace
 
-
+# Flask app
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
+# SocketIO
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 socketio.on_namespace(TimerNamespace())
 
 
