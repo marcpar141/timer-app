@@ -5,15 +5,16 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class ServerConnection {
   final String address;
   IO.Socket? _socket;
-  final Map<String, StreamController<String>> _controllers = {};
+  final Map<String, dynamic> _options;
+  final Map<String, StreamController<dynamic>> _controllers = {};
 
-  ServerConnection(this.address);
+  ServerConnection(this.address, this._options);
 
   Future<void> connect() async {
     if (_socket != null && _socket?.connected == true) {
       return;
     }
-    _socket = IO.io(address);
+    _socket = IO.io(address, _options);
     _socket?.onConnect((data) => print("connected to: $address"));
     _socket?.onConnectError((data) => print("connect error :$data"));
     _socket?.onConnectTimeout((data) => print("connect timeout: $data"));
@@ -36,8 +37,8 @@ class ServerConnection {
     return _controllers[event]?.stream.cast<String>() ?? const Stream.empty();
   }
 
-  void sendMessage(String message) {
-    _socket?.emit(message);
+  void sendMessage(String event, [dynamic data]) {
+    _socket?.emit(event, data);
   }
 
   FutureOr<void> _closeConnection(String event) {
