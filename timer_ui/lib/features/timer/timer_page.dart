@@ -17,7 +17,7 @@ class TimerPage extends StatelessWidget {
           child: Consumer<TimerBloc>(
             builder: (context, bloc) => Column(
               children: [
-                Text(bloc.state.secondsLeft.toString()),
+                Text(bloc.state.secondsLeft?.toString() ?? "nie wystartowało"),
                 SizedBox(
                   height: 20,
                 ),
