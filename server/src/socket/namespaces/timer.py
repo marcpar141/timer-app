@@ -1,5 +1,5 @@
 from flask import request
-from flask_socketio import SocketIO, join_room, leave_room
+from flask_socketio import join_room, leave_room
 from flask_socketio.namespace import Namespace
 from typing import Union
 
