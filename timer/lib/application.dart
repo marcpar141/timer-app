@@ -1,38 +1,54 @@
-import 'package:timer/extensions/let_extension.dart';
-import 'package:timer/socket.dart';
+import 'dart:convert';
+
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:timer/server_connection.dart';
 import 'package:timer/timer.dart';
 
 class Application {
-  ServerConnection? _connection;
-  Timer? _timer;
+  final ServerConnection _connection;
+  final Map<String, Timer> _timer = {};
 
-  void start() {
-    _connection = ServerConnection("address")..connect();
+  Application()
+      : _connection = ServerConnection(
+            "ws://192.168.1.108:5000/timer",
+            IO.OptionBuilder()
+                .disableAutoConnect()
+                .setExtraHeaders({"client": "timer_service"}).build());
 
-    _connection?.observe().listen((event) {
-      if (event == "start") {
-        _startTimer();
-      } else if (event == "stop") {
-        _stopTimer();
+  Future<void> start() async {
+    await _connection.connect();
+
+    _connection.observe("control").listen((event) {
+      final message = jsonDecode(event) as Map<String, String>;
+      final command = message["command"];
+      final roomName = message["roomName"];
+
+      if (command == null || roomName == null) {
+        return;
+      }
+
+      if (command == "start") {
+        _startTimer(roomName);
+      } else if (command == "stop") {
+        _stopTimer(roomName);
       }
     });
   }
 
-  void _startTimer() {
-    _stopTimer();
-    _timer =
-        Timer(period: Duration(seconds: 1), duration: Duration(seconds: 3600))
-          ..addListener(() {
-            _connection?.sendMessage("elo");
+  void _startTimer(String roomName) {
+    _stopTimer(roomName);
+    _timer[roomName] =
+        Timer(period: Duration(seconds: 1), duration: Duration(seconds: 10))
+          ..addListener((time) {
+            _connection.sendMessage("state", time);
           })
           ..startTimer();
   }
 
-  void _stopTimer() {
-    _timer?.let((it) {
-      it.stopTimer();
-      it.removeListeners();
-      _timer = null;
-    });
+  void _stopTimer(String roomName) {
+    _timer[roomName]
+      ?..stopTimer()
+      ..removeListeners();
+    _timer.remove(roomName);
   }
 }
