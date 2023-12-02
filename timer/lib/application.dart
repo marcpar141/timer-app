@@ -10,9 +10,10 @@ class Application {
 
   Application()
       : _connection = ServerConnection(
-    "ws://server:5000/timer",
+          "ws://server:5000/timer",
           IO.OptionBuilder().setTransports(["websocket"]).setExtraHeaders(
-              {"client": "timer_service"}).build(),
+            {"client": "timer_service"},
+          ).build(),
         );
 
   Future<void> start() async {
