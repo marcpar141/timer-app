@@ -14,6 +14,8 @@ class ServerConnection {
       return;
     }
     _socket = IO.io(address);
+    print("connecttttt");
+    _socket?.onConnecting((data) => print("connecting: $data"));
     _socket?.onConnect((data) => print("connected to: $address"));
     _socket?.onConnectError((data) => print("connect error :$data"));
     _socket?.onConnectTimeout((data) => print("connect timeout: $data"));
@@ -36,8 +38,8 @@ class ServerConnection {
     return _controllers[event]?.stream.cast<String>() ?? const Stream.empty();
   }
 
-  void sendMessage(String message) {
-    _socket?.emit(message);
+  void sendMessage(String event, [dynamic data]) {
+    _socket?.emit(event, data);
   }
 
   FutureOr<void> _closeConnection(String event) {

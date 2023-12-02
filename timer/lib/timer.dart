@@ -1,24 +1,25 @@
 import "dart:async" as async;
 
 typedef VoidCallback = void Function();
+typedef ElapsedCallback = void Function(int seconds);
 
 class Timer {
   final Duration period;
   final Duration duration;
   final int totalEmissions;
   var _emissions = 0;
-  final List<VoidCallback> _listeners = [];
+  final List<ElapsedCallback> _listeners = [];
   final List<VoidCallback> _onFinishedListeners = [];
   async.Timer? timer;
 
   Timer({required this.period, required this.duration})
       : totalEmissions = duration.inSeconds ~/ period.inSeconds;
 
-  void addListener(VoidCallback listener) {
+  void addListener(ElapsedCallback listener) {
     _listeners.add(listener);
   }
 
-  void removeListener(VoidCallback listener) {
+  void removeListener(ElapsedCallback listener) {
     _listeners.remove(listener);
   }
 
@@ -45,7 +46,7 @@ class Timer {
   void _notifyListeners(async.Timer timer) {
     _emissions++;
     for (final listener in _listeners) {
-      listener();
+      listener((period * _emissions).inSeconds);
     }
     if (_emissions >= totalEmissions) {
       stopTimer();
