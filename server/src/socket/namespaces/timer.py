@@ -11,7 +11,11 @@ class TimerNamespace(Namespace):
         self.timer_control_event_name = "control"
 
     def on_connect(self):
-        print(f"{self.__get_sid()} connected!")
+        if self.__is_system_client():
+            return
+        sid = self.__get_sid()
+        join_room(sid)
+        self.socketio.emit(self.timer_control_event_name, {"command": "start", "roomName": sid})
 
     def on_disconnect(self):
         print(f"{self.__get_sid()} disconnected!")
