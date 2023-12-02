@@ -14,3 +14,9 @@ class TimerNamespace(Namespace):
 
     def __get_sid(self) -> str:
         return request.sid
+
+    def __is_system_client(self) -> bool:
+        return True if self.__get_system_client_info() is not None else False
+
+    def __get_system_client_info(self) -> Union[str, None]:
+        return request.headers.environ.get('HTTP_CLIENT')
