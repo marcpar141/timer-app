@@ -5,17 +5,16 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class ServerConnection {
   final String address;
   IO.Socket? _socket;
-  final Map<String, StreamController<String>> _controllers = {};
+  final Map<String, dynamic> _options;
+  final Map<String, StreamController<dynamic>> _controllers = {};
 
-  ServerConnection(this.address);
+  ServerConnection(this.address, this._options);
 
   Future<void> connect() async {
     if (_socket != null && _socket?.connected == true) {
       return;
     }
-    _socket = IO.io(address);
-    print("connecttttt");
-    _socket?.onConnecting((data) => print("connecting: $data"));
+    _socket = IO.io(address, _options);
     _socket?.onConnect((data) => print("connected to: $address"));
     _socket?.onConnectError((data) => print("connect error :$data"));
     _socket?.onConnectTimeout((data) => print("connect timeout: $data"));
@@ -29,12 +28,12 @@ class ServerConnection {
 
   Stream<String> observe(String event) {
     if (_controllers.containsKey(event)) {
-      return _controllers[event]!.stream.cast<String>();
+      return _controllers[event]!.stream.map((event) => event.toString());
     }
     _controllers[event] = StreamController(
       onCancel: () => _closeConnection(event),
     );
-    _socket?.on(event, (data) => _controllers[event]?.add(data));
+    _socket?.on(event, (data) => _controllers[event]?.add(data.toString()));
     return _controllers[event]?.stream.cast<String>() ?? const Stream.empty();
   }
 
