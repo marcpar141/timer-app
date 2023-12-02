@@ -14,18 +14,26 @@ class TimerBloc extends BaseBloc<TimerState> {
 
   TimerBloc(this._startTimerUseCase, this._stopTimerUseCase,
       this._observeTimerUseCase)
-      : super(TimerState(3600));
+      : super(TimerState(null, TimerStatus.STOPPED));
 
-  void startTimer() {
-    _startTimerUseCase.execute();
-    _timerSubscription = _observeTimerUseCase.execute().listen((event) {
-      state = TimerState(event);
-    });
+  Future<void> startTimer() async {
+    await _startTimerUseCase.execute();
+    state = state.copyWith(timerStatus: TimerStatus.RUNNING);
+    _timerSubscription = _observeTimerUseCase.execute().listen(
+          (event) => state = state.copyWith(secondsLeft: event),
+          onDone: () => _updateStatusToStopped(),
+          onError: (_) => _updateStatusToStopped(),
+        );
   }
 
   void stopTimer() {
     _stopTimerUseCase.execute();
+    _updateStatusToStopped();
     _closeSubscription();
+  }
+
+  void _updateStatusToStopped() {
+    state = state.copyWith(timerStatus: TimerStatus.STOPPED);
   }
 
   void _closeSubscription() {

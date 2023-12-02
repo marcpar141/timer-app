@@ -1,7 +1,8 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:timer_ui/features/timer/domain/repository/timer_repository.dart';
-import 'package:timer_ui/utils/websocket.dart';
+import 'package:timer_ui/utils/server_connection.dart';
 
-class TimerRepositoryImpl implements TimerRepository {
+class TimerRepositoryImpl extends Disposable implements TimerRepository {
   final ServerConnection _connection;
 
   TimerRepositoryImpl(this._connection);
@@ -9,19 +10,23 @@ class TimerRepositoryImpl implements TimerRepository {
   @override
   Stream<int> observeTimer() {
     return _connection
-        .observe()
+        .observe("timer")
         .where((event) => int.tryParse(event) != null)
         .map((event) => int.parse(event));
   }
 
   @override
-  void startTimer() {
-    _connection.connect();
-    _connection.sendMessage("start");
+  Future<void> startTimer() async {
+    await _connection.connect();
   }
 
   @override
   void stopTimer() {
-    _connection.sendMessage("stop");
+    _connection.disconnect();
+  }
+
+  @override
+  void dispose() {
+    _connection.disconnect();
   }
 }

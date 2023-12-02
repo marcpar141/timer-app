@@ -1,5 +1,5 @@
 abstract class TimerRepository {
-  void startTimer();
+  Future<void> startTimer();
 
   void stopTimer();
 

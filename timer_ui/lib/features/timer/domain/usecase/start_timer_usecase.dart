@@ -1,7 +1,7 @@
 import 'package:timer_ui/features/timer/domain/repository/timer_repository.dart';
 
 abstract class StartTimerUseCase {
-  void execute();
+  Future<void> execute();
 }
 
 class StartTimerUseCaseImpl implements StartTimerUseCase {
@@ -10,7 +10,5 @@ class StartTimerUseCaseImpl implements StartTimerUseCase {
   StartTimerUseCaseImpl(this._repository);
 
   @override
-  void execute() {
-    _repository.startTimer();
-  }
+  Future<void> execute() => _repository.startTimer();
 }
