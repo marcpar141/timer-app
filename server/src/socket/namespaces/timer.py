@@ -1,3 +1,5 @@
+import json
+
 from flask import request
 from flask_socketio import join_room, leave_room
 from flask_socketio.namespace import Namespace
@@ -14,14 +16,14 @@ class TimerNamespace(Namespace):
             return
         sid = self.__get_sid()
         join_room(sid)
-        self.emit(self.timer_control_event_name, {"command": "start", "roomName": sid})
+        self.emit(self.timer_control_event_name, json.dumps({"command": "start", "roomName": sid}))
 
     def on_disconnect(self):
         if self.__is_system_client():
             return
         sid = self.__get_sid()
         leave_room(sid)
-        self.emit(self.timer_control_event_name, {"command": "stop", "roomName": sid})
+        self.emit(self.timer_control_event_name, json.dumps({"command": "stop", "roomName": sid}))
 
     def __get_sid(self) -> str:
         return request.sid
