@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  server:
+    container_name: server
+    build: server
+    ports:
+      - "5000:5000"
+
+  timer:
+    container_name: timer
+    build: timer
+
+  timer_ui:
+    container_name: timer_ui
+    build: timer_ui
+    ports:
+      - "8080:80"
