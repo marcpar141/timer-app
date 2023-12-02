@@ -7,7 +7,6 @@ from typing import Union
 class TimerNamespace(Namespace):
     def __init__(self):
         super().__init__("/timer")
-        self.socketio: SocketIO = self.socketio
         self.timer_control_event_name = "control"
 
     def on_connect(self):
@@ -15,14 +14,14 @@ class TimerNamespace(Namespace):
             return
         sid = self.__get_sid()
         join_room(sid)
-        self.socketio.emit(self.timer_control_event_name, {"command": "start", "roomName": sid})
+        self.emit(self.timer_control_event_name, {"command": "start", "roomName": sid})
 
     def on_disconnect(self):
         if self.__is_system_client():
             return
         sid = self.__get_sid()
         leave_room(sid)
-        self.socketio.emit(self.timer_control_event_name, {"command": "stop", "roomName": sid})
+        self.emit(self.timer_control_event_name, {"command": "stop", "roomName": sid})
 
     def __get_sid(self) -> str:
         return request.sid
