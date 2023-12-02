@@ -13,13 +13,24 @@ class ServerConnection {
       _channel?.sink.close(
           WebSocketStatus.abnormalClosure, "connecting again to channel");
     }
-    _channel = WebSocketChannel.connect(
-      Uri.parse('wss://echo.websocket.events'),
-    );
+    print("connecting to $address");
+    try {
+      _channel = WebSocketChannel.connect(
+        Uri.parse(address),
+      );
+    } catch (e) {
+      print("error connecting $e");
+    }
   }
 
-  Stream<String> observe() =>
-      _channel?.stream.cast<String>() ?? const Stream.empty();
+  Stream<String> observe() {
+    print("start observing");
+    return _channel?.stream.map((event) {
+          print("observing: $event");
+          return event;
+        }).cast<String>() ??
+        const Stream.empty();
+  }
 
   void sendMessage(String message) {
     _channel?.sink.add(message);
