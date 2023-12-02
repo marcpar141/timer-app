@@ -6,7 +6,7 @@ from src.socket.namespaces.timer import TimerNamespace
 
 
 app = Flask(__name__)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="gevent")
 CORS(app)
 
 socketio.on_namespace(TimerNamespace())
