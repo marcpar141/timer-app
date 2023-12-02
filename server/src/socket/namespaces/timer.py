@@ -1,5 +1,5 @@
 from flask import request
-from flask_socketio import SocketIO, join_room
+from flask_socketio import SocketIO, join_room, leave_room
 from flask_socketio.namespace import Namespace
 from typing import Union
 
@@ -18,7 +18,11 @@ class TimerNamespace(Namespace):
         self.socketio.emit(self.timer_control_event_name, {"command": "start", "roomName": sid})
 
     def on_disconnect(self):
-        print(f"{self.__get_sid()} disconnected!")
+        if self.__is_system_client():
+            return
+        sid = self.__get_sid()
+        leave_room(sid)
+        self.socketio.emit(self.timer_control_event_name, {"command": "stop", "roomName": sid})
 
     def __get_sid(self) -> str:
         return request.sid
