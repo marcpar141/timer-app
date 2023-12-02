@@ -10,3 +10,9 @@ services:
   timer:
     container_name: timer
     build: timer
+
+  timer-ui:
+    container_name: timer-ui
+    build: timer-ui
+    ports:
+      - "8080:80"
