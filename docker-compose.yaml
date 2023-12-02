@@ -6,14 +6,7 @@ services:
     build: server
     ports:
       - "5000:5000"
-    networks:
-      - timer
 
   timer:
     container_name: timer
     build: timer
-    networks:
-      - timer
-
-networks:
-  timer:
