@@ -1,5 +1,6 @@
-import 'package:timer/timer.dart' as timer;
+import 'package:timer/application.dart';
 
 void main(List<String> arguments) {
-  print('Hello world: ${timer.calculate()}!');
+  final application = Application();
+  application.start();
 }
