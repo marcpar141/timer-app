@@ -46,7 +46,7 @@ class Timer {
   void _notifyListeners(async.Timer timer) {
     _emissions++;
     for (final listener in _listeners) {
-      listener((period * _emissions).inSeconds);
+      listener((period * (totalEmissions - _emissions)).inSeconds);
     }
     if (_emissions >= totalEmissions) {
       stopTimer();
