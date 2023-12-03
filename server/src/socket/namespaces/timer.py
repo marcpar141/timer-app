@@ -46,7 +46,7 @@ class TimerNamespace(Namespace):
         return request.headers.environ.get('HTTP_CLIENT')
 
     def __get_time_from_state(self, state: Dict[str, Union[int, str]]) -> Union[Dict[str, int], None]:
-        time = state.get("time", 120)
+        time = state.get("time")
         return {"time": time} if time is not None else None
 
     def __get_room_name_from_state(self, state: Dict[str, Union[int, str]]) -> Union[str, None]:
