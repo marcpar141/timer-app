@@ -34,7 +34,7 @@ class ServerConnection {
     _controllers[event] = StreamController(
       onCancel: () => _closeConnection(event),
     );
-    _socket?.on(event, (data) => _controllers[event]?.add(data));
+    _socket?.on(event, (data) => _controllers[event]?.add(data.toString()));
     return _controllers[event]?.stream.cast<String>() ?? const Stream.empty();
   }
 
