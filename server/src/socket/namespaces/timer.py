@@ -25,6 +25,8 @@ class TimerNamespace(Namespace):
         if room_name is None:
             return
         time = self.__get_time_from_state(state)
+        if time is None:
+            return
         self.emit(self.timer_state_event_name, json.dumps(time), room_name)
 
     def on_disconnect(self):
