@@ -22,9 +22,15 @@ class Application {
 
   void _startObservingSocket() {
     _connection.observe("control").listen((event) {
-      final message = jsonDecode(event) as Map<String, String>;
-      final command = message["command"];
-      final roomName = message["roomName"];
+      print(event);
+      final message = jsonDecode(event);
+      print(message);
+      print(message.runtimeType);
+
+      print(message["command"].runtimeType);
+      print(message["roomName"].runtimeType);
+      final command = message["command"] as String?;
+      final roomName = message["roomName"] as String?;
 
       if (command == null || roomName == null) {
         return;
