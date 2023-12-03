@@ -14,10 +14,15 @@ class ServerConnection {
     if (_socket != null && _socket?.connected == true) {
       return;
     }
+    final completer = Completer();
     _socket = IO.io(address, _options);
-    _socket?.onConnect((data) => print("connected to: $address"));
+    _socket?.onConnect((data) {
+      print("connected to: $address");
+      completer.complete();
+    });
     _socket?.onConnectError((data) => print("connect error :$data"));
     _socket?.onConnectTimeout((data) => print("connect timeout: $data"));
+    return completer.future;
   }
 
   void disconnect() {
@@ -26,16 +31,16 @@ class ServerConnection {
     }
   }
 
-  Stream<String> observe(String event) {
+  Stream<dynamic> observe(String event) {
     print("observing event: $event");
     if (_controllers.containsKey(event)) {
-      return _controllers[event]!.stream.cast<String>();
+      return _controllers[event]!.stream;
     }
     _controllers[event] = StreamController(
       onCancel: () => _closeConnection(event),
     );
-    _socket?.on(event, (data) => _controllers[event]?.add(data.toString()));
-    return _controllers[event]?.stream.cast<String>() ?? const Stream.empty();
+    _socket?.on(event, (data) => _controllers[event]?.add(data));
+    return _controllers[event]?.stream ?? const Stream.empty();
   }
 
   void sendMessage(String event, [dynamic data]) {
