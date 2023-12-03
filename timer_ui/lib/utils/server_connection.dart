@@ -27,6 +27,7 @@ class ServerConnection {
   }
 
   Stream<String> observe(String event) {
+    print("observing event: $event");
     if (_controllers.containsKey(event)) {
       return _controllers[event]!.stream.cast<String>();
     }
@@ -38,6 +39,7 @@ class ServerConnection {
   }
 
   void sendMessage(String event, [dynamic data]) {
+    print("sending event: $event, with data: $data");
     _socket?.emit(event, data);
   }
 

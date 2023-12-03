@@ -10,7 +10,7 @@ class TimerRepositoryImpl extends Disposable implements TimerRepository {
   @override
   Stream<int> observeTimer() {
     return _connection
-        .observe("timer")
+        .observe("state")
         .where((event) => int.tryParse(event) != null)
         .map((event) => int.parse(event));
   }
