@@ -38,6 +38,7 @@ class ServerConnection {
   }
 
   void sendMessage(String event, [dynamic data]) {
+    print("sending event: $event, with data: $data");
     _socket?.emit(event, data);
   }
 
