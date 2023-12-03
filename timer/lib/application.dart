@@ -24,13 +24,8 @@ class Application {
 
   void _startObservingSocket() {
     _connection.observe("control").listen((event) {
-      print(event);
+      print("control -> received: $event");
       final message = jsonDecode(event);
-      print(message);
-      print(message.runtimeType);
-
-      print(message["command"].runtimeType);
-      print(message["roomName"].runtimeType);
       final command = message["command"] as String?;
       final roomName = message["roomName"] as String?;
 
@@ -51,7 +46,8 @@ class Application {
     _timer[roomName] =
         Timer(period: Duration(seconds: 1), duration: Duration(seconds: 10))
           ..addListener((time) {
-            _connection.sendMessage("state", time);
+            _connection.sendMessage(
+                "state", jsonEncode({"time": time, "roomName": roomName}));
           })
           ..startTimer();
   }
