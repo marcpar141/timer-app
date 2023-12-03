@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:timer_ui/features/timer/domain/repository/timer_repository.dart';
 import 'package:timer_ui/utils/server_connection.dart';
@@ -11,8 +13,16 @@ class TimerRepositoryImpl extends Disposable implements TimerRepository {
   Stream<int> observeTimer() {
     return _connection
         .observe("state")
-        .where((event) => int.tryParse(event) != null)
-        .map((event) => int.parse(event));
+        .map((event) {
+          print("state -> received: $event");
+          return jsonDecode(event);
+        })
+        .where((event) => int.tryParse(event["time"]) != null)
+        .map((event) {
+          print(
+              "I'm mapping $event from ${event["time"]} in result: ${int.parse(event["time"])}");
+          return int.parse(event["time"]);
+        });
   }
 
   @override
